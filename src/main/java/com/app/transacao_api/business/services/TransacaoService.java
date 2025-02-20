@@ -20,7 +20,7 @@ public class TransacaoService {
 	
 	public void addTransacao(TransacaoRequestDTO dto) {
 		
-		log.info("Processamento de gravação das transações iniciado");
+		log.info("Processamento de gravação das transações iniciado" + dto);
 		if(dto.dataHora().isAfter(OffsetDateTime.now())) {
 			
 			log.error("Data e hora maiores que a data atual");
@@ -32,18 +32,25 @@ public class TransacaoService {
 			throw new UnprocessableEntity("Valor não pode sert menor que 0");
 		}
 		
+		
 		listaTransacoes.add(dto);
+		log.info("Transacoes adicionadas com sucesso");
 	}
 	
 	public void limparTransacoes() {
-		listaTransacoes.clear();
+		log.info("Iniciado processamento para deletar transações");
+        listaTransacoes.clear();
+        log.info("Transações deletadas com sucesso");
 	}
 	
-	public List<TransacaoRequestDTO> buscarTransacoes(Integer intervaloBuscar) {
-		
-		OffsetDateTime dataHoraIntervalo = OffsetDateTime.now().minusSeconds(intervaloBuscar);
-		
-		return listaTransacoes.stream().filter(transacao -> transacao.dataHora().isAfter(dataHoraIntervalo)).toList();
-		
-	}
+	 public List<TransacaoRequestDTO> buscarTransacoes(Integer intervaloBusca){
+	        log.info("Buscas de transações por tempo iniciadas" + intervaloBusca);
+	        OffsetDateTime dataHoraIntervalo = OffsetDateTime.now().minusSeconds(intervaloBusca);
+
+	        log.info("Retorno de transações com sucesso");
+	        return listaTransacoes.stream()
+	                .filter(transacao -> transacao.dataHora()
+	                        .isAfter(dataHoraIntervalo)).toList();
+
+	    }
 }

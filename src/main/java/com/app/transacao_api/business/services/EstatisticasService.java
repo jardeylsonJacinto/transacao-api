@@ -9,22 +9,42 @@ import com.app.transacao_api.dtos.EstatisticasResponseDTO;
 import com.app.transacao_api.dtos.TransacaoRequestDTO;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class EstatisticasService {
-	
-	public final TransacaoService transactioService;
-	
-	public EstatisticasResponseDTO calcularEstatisticasTransacoes(Integer intervaloBusca) {
-		List<TransacaoRequestDTO> transacoes = transactioService.buscarTransacoes(intervaloBusca);
-		
-		DoubleSummaryStatistics estatisticasTransacoes = transacoes.stream().mapToDouble(TransacaoRequestDTO::valor).summaryStatistics();
-		
+
+    public final TransacaoService transacaoService;
+
+
+    public EstatisticasResponseDTO calcularEstatisticasTransacoes(Integer intervaloBusca) {
+
+        log.info("Iniciada busca de estatísticas de transações pelo período de tempo " + intervaloBusca);
+
+        long start = System.currentTimeMillis();
+
+        List<TransacaoRequestDTO> transacoes = transacaoService.buscarTransacoes(intervaloBusca);
+
+        if (transacoes.isEmpty()) {
+            return new EstatisticasResponseDTO(0L, 0.0, 0.0, 0.0, 0.0);
+        }
+
+        DoubleSummaryStatistics estatisticasTransacoes = transacoes.stream()
+                .mapToDouble(TransacaoRequestDTO::valor).summaryStatistics();
+
+        long finish = System.currentTimeMillis();
+        long tempoRequisicao = finish - start;
+        System.out.println("Tempo de requisição: " + tempoRequisicao + " milissegundos");
+
+        log.info("Estatisticas retornadas com sucesso");
         return new EstatisticasResponseDTO(estatisticasTransacoes.getCount(),
                 estatisticasTransacoes.getSum(),
                 estatisticasTransacoes.getAverage(),
                 estatisticasTransacoes.getMin(),
                 estatisticasTransacoes.getMax());
-	}
+    }
+
 }
