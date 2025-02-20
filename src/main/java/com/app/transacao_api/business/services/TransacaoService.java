@@ -43,5 +43,7 @@ public class TransacaoService {
 		
 		OffsetDateTime dataHoraIntervalo = OffsetDateTime.now().minusSeconds(intervaloBuscar);
 		
-		return listaTransacoes.stream().filter(transacoes -> transacoes.dataHora().isAfter(dataHoraIntervalo)).toList();}
+		return listaTransacoes.stream().filter(transacao -> transacao.dataHora().isAfter(dataHoraIntervalo)).toList();
+		
+	}
 }
